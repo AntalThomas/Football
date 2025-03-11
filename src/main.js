@@ -26,11 +26,12 @@ scene.add(mesh)
 
 //Football
 const geometry = new THREE.CapsuleGeometry(0.1, 0.1, 4, 8)
-const material = new THREE.MeshStandardMaterial({ color: 0xffffff })
-const playerFootball = new THREE.Mesh(geometry, material)
-const computerFootball = new THREE.Mesh(geometry, material)
-playerFootball.position.y = 0.55
-computerFootball.position.y = 0.55
+const playerMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000 })
+const computerMaterial = new THREE.MeshStandardMaterial({ color: 0xffff00 })
+const playerFootball = new THREE.Mesh(geometry, playerMaterial)
+const computerFootball = new THREE.Mesh(geometry, computerMaterial)
+playerFootball.position.set(0.1, 0.55, 0)
+computerFootball.position.set(-0.1, 0.55, 0)
 scene.add(playerFootball, computerFootball)
 
 //Ceate Post
@@ -122,12 +123,12 @@ loop()
 
 const kickGoal = () => {
   // Clicking the button multiple times will not work
-  if (playerFootball.position.x != 0) return
-  if (computerFootball.position.x != 0) return
+  if (playerFootball.position.x != 0.1) return
+  if (computerFootball.position.x != -0.1) return
 
   var highestPoint = false
-  const randomZPlayer = (Math.random() * 0.01) - 0.0005
-  const randomZComputer = (Math.random() * 0.01) - 0.0005
+  const randomZPlayer = (Math.random() * 0.014) - 0.007
+  const randomZComputer = (Math.random() * 0.012) - 0.006
 
   const animate = () => {
     // Playerball
@@ -150,25 +151,68 @@ const kickGoal = () => {
         requestAnimationFrame(animate)
       } else {
         if (playerFootball.position.z > -0.34 && playerFootball.position.z < 0.34) {
-          const total = document.querySelector('.total')
-          const goals = document.querySelector('.goals')
+          const playerTotal = document.querySelector('.playerTotal')
+          const playerGoals = document.querySelector('.playerGoals')
 
-          total.innerHTML = parseInt(total.innerHTML) + 6
-          goals.innerHTML = parseInt(goals.innerHTML) + 1
+          playerTotal.innerHTML = parseInt(playerTotal.innerHTML) + 6
+          playerGoals.innerHTML = parseInt(playerGoals.innerHTML) + 1
         } else if (playerFootball.position.z <= -0.34 || playerFootball.position.z >= -1.34) {
-          const total = document.querySelector('.total')
-          const behinds = document.querySelector('.behinds')
+          const playerTotal = document.querySelector('.playerTotal')
+          const playerBehinds = document.querySelector('.playerBehinds')
           
-          total.innerHTML = parseInt(total.innerHTML) + 1
-          behinds.innerHTML = parseInt(behinds.innerHTML) + 1
+          playerTotal.innerHTML = parseInt(playerTotal.innerHTML) + 1
+          playerBehinds.innerHTML = parseInt(playerBehinds.innerHTML) + 1
         }
 
-        playerFootball.position.set(0, 0.55, 0)
+        playerFootball.position.set(0.1, 0.55, 0)
         playerFootball.rotation.set(0, 0, 0)
       }
     }
+
+  }
+  const animateComputer = () => {
+
+    // Computer
+    if (computerFootball.position.x < 11) {
+      if (computerFootball.position.y <= 2.5 && !highestPoint) {
+        computerFootball.position.y += 0.02
+        computerFootball.position.x -= 0.03
+        computerFootball.position.z += randomZComputer
+
+        computerFootball.rotation.z += 0.1
+        requestAnimationFrame(animateComputer)
+      } else if (computerFootball.position.y > 0.55) {
+        computerFootball.position.y -= 0.015
+        computerFootball.position.x -= 0.02
+        computerFootball.position.z += randomZComputer
+        
+        computerFootball.rotation.z += 0.05
+
+        highestPoint = true
+        requestAnimationFrame(animateComputer)
+      } else {
+        if (computerFootball.position.z > -0.34 && computerFootball.position.z < 0.34) {
+          const computerTotal = document.querySelector('.computerTotal')
+          const computerGoals = document.querySelector('.computerGoals')
+
+          computerTotal.innerHTML = parseInt(computerTotal.innerHTML) + 6
+          computerGoals.innerHTML = parseInt(computerGoals.innerHTML) + 1
+        } else if (computerFootball.position.z <= -0.34 || computerFootball.position.z >= -1.34) {
+          const computerTotal = document.querySelector('.computerTotal')
+          const computerBehinds = document.querySelector('.computerBehinds')
+          
+          computerTotal.innerHTML = parseInt(computerTotal.innerHTML) + 1
+          computerBehinds.innerHTML = parseInt(computerBehinds.innerHTML) + 1
+        }
+
+        computerFootball.position.set(-0.1, 0.55, 0)
+        computerFootball.rotation.set(0, 0, 0)
+      }
+    }
+
   }
   animate()
+  animateComputer()
 }
 
 const moveLeft = () => {

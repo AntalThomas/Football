@@ -81,7 +81,7 @@ html {
   width: 25px;
   text-align: center;
 }
-.total {
+.playerTotal, .computerTotal, .goalsTotalTitle {
   color: red;
   font-weight: bold;
 }
