@@ -1,0 +1,87 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  color: white;
+}
+
+body,
+html {
+  overflow-x: hidden;
+  font-family: 'Poppins', sans-serif;
+}
+
+.webgl {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+
+.controls {
+  color: white;
+  z-index: 2;
+  position: absolute;
+  font-size: 3rem;
+  left: 50%;
+  top: 75%;
+  transform: translate(-50%, 150%);
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+  gap: 10px
+}
+
+.title, .moveLeft, .moveRight {
+  color: white;
+  font-size: 3rem;
+}
+
+.scoreboard {
+  width: 300px;
+  background: black;
+  padding: 10px;
+  border-radius: 5px;
+  color: white;
+  z-index: 2;
+  position: absolute;
+  top: 1%;
+  left: 1%;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: blue;
+  padding: 5px;
+  font-size: 16px;
+  font-weight: bold;
+}
+.team {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: black;
+  padding: 5px;
+  font-size: 18px;
+  border-bottom: 1px solid white;
+}
+.team-name {
+  flex-grow: 1;
+  margin-left: 10px;
+}
+.score-details {
+  display: flex;
+  gap: 10px;
+  font-size: 18px;
+}
+.score-details span {
+  width: 25px;
+  text-align: center;
+}
+.total {
+  color: red;
+  font-weight: bold;
+}
