@@ -128,7 +128,7 @@ const kickGoal = () => {
 
   var highestPoint = false
   const randomZPlayer = (Math.random() * 0.014) - 0.007
-  const randomZComputer = (Math.random() * 0.012) - 0.006
+  const randomZComputer = (Math.random() * 0.011) - 0.0055
 
   const animate = () => {
     // Playerball
