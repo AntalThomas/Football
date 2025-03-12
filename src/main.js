@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import './style.css'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 
 //Screen Size
 const sizes = {
@@ -11,8 +12,6 @@ const sizes = {
 //Scene
 const scene = new THREE.Scene()
 scene.background = new THREE.Color(0xd3d3d3)
-//Outside Oval
-
 
 //Oval
 const shape = new THREE.Shape()
@@ -24,6 +23,9 @@ mesh.rotation.x = Math.PI / 2
 mesh.receiveShadow = true
 scene.add(mesh)
 
+// Fence
+
+
 //Football
 const geometry = new THREE.CapsuleGeometry(0.1, 0.1, 4, 8)
 const playerMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000 })
@@ -34,18 +36,20 @@ playerFootball.position.set(0.1, 0.55, 0)
 computerFootball.position.set(-0.1, 0.55, 0)
 scene.add(playerFootball, computerFootball)
 
-//Ceate Post
+//Goal, Point and Padding
 const createPost = (x, y, z, geometry, material) => {
   const post = new THREE.Mesh(geometry, material)
   post.position.set(x, y, z)
   post.castShadow = true
+  post.receiveShadow = true
   return post
 }
 
-//Goal & Point Posts
-const goalGeometry = new THREE.CylinderGeometry(0.05, 0.05, 3, 10)
-const pointGeometry = new THREE.CylinderGeometry(0.05, 0.05, 2, 10)
+const goalGeometry = new THREE.CylinderGeometry(0.04, 0.04, 3, 10)
+const pointGeometry = new THREE.CylinderGeometry(0.04, 0.04, 2, 10)
+const paddingGeometry = new THREE.CylinderGeometry(0.1, 0.1, 0.8, 10)
 const postMaterial = new THREE.MeshStandardMaterial({ color: 0xFFFFFF })
+const paddingMaterial = new THREE.MeshStandardMaterial({ color: 0xFC0D0D })
 
 const goalPost1 = createPost(5.1, 1,  0.5, goalGeometry, postMaterial)
 const goalPost2 = createPost(5.1, 1, -0.5, goalGeometry, postMaterial)
@@ -57,6 +61,15 @@ const pointPost2 = createPost(5.1, 1, -1.5, pointGeometry, postMaterial)
 const pointPost3 = createPost(-5.1, 1, -1.5, pointGeometry, postMaterial)
 const pointPost4 = createPost(-5.1, 1,  1.5, pointGeometry, postMaterial)
 
+const padding1 = createPost(5.1, 0.6,  0.5, paddingGeometry, paddingMaterial)
+const padding2 = createPost(5.1, 0.6, -0.5, paddingGeometry, paddingMaterial)
+const padding3 = createPost(-5.1, 0.6, -0.5, paddingGeometry, paddingMaterial)
+const padding4 = createPost(-5.1, 0.6,  0.5, paddingGeometry, paddingMaterial)
+const padding5 = createPost(5.1, 0.6,  1.5, paddingGeometry, paddingMaterial)
+const padding6 = createPost(5.1, 0.6, -1.5, paddingGeometry, paddingMaterial)
+const padding7 = createPost(-5.1, 0.6, -1.5, paddingGeometry, paddingMaterial)
+const padding8 = createPost(-5.1, 0.6,  1.5, paddingGeometry, paddingMaterial)
+
 scene.add(
   goalPost1,
   goalPost2,
@@ -65,7 +78,15 @@ scene.add(
   pointPost1,
   pointPost2,
   pointPost3,
-  pointPost4
+  pointPost4,
+  padding1,
+  padding2,
+  padding3,
+  padding4,
+  padding5,
+  padding6,
+  padding7,
+  padding8
 )
 
 //Light
@@ -101,7 +122,7 @@ renderer.render(scene, camera)
 
 //Controls
 const controls = new OrbitControls(camera, canvas)
-controls.enablePan = false
+controls.enablePan = true
 controls.enableZoom = false
 
 //Resize
@@ -126,12 +147,12 @@ const kickGoal = () => {
   if (playerFootball.position.x != 0.1) return
   if (computerFootball.position.x != -0.1) return
 
+  // Random accuracy, higher for computer, lower for player
   var highestPoint = false
   const randomZPlayer = (Math.random() * 0.014) - 0.007
   const randomZComputer = (Math.random() * 0.011) - 0.0055
 
-  const animate = () => {
-    // Playerball
+  const animatePlayer = () => {
     if (playerFootball.position.x < 11) {
       if (playerFootball.position.y <= 2.5 && !highestPoint) {
         playerFootball.position.y += 0.02
@@ -139,7 +160,7 @@ const kickGoal = () => {
         playerFootball.position.z += randomZPlayer
 
         playerFootball.rotation.z += 0.1
-        requestAnimationFrame(animate)
+        requestAnimationFrame(animatePlayer)
       } else if (playerFootball.position.y > 0.55) {
         playerFootball.position.y -= 0.015
         playerFootball.position.x += 0.02
@@ -148,7 +169,7 @@ const kickGoal = () => {
         playerFootball.rotation.z += 0.05
 
         highestPoint = true
-        requestAnimationFrame(animate)
+        requestAnimationFrame(animatePlayer)
       } else {
         if (playerFootball.position.z > -0.34 && playerFootball.position.z < 0.34) {
           const playerTotal = document.querySelector('.playerTotal')
@@ -168,11 +189,8 @@ const kickGoal = () => {
         playerFootball.rotation.set(0, 0, 0)
       }
     }
-
   }
   const animateComputer = () => {
-
-    // Computer
     if (computerFootball.position.x < 11) {
       if (computerFootball.position.y <= 2.5 && !highestPoint) {
         computerFootball.position.y += 0.02
@@ -180,6 +198,7 @@ const kickGoal = () => {
         computerFootball.position.z += randomZComputer
 
         computerFootball.rotation.z += 0.1
+
         requestAnimationFrame(animateComputer)
       } else if (computerFootball.position.y > 0.55) {
         computerFootball.position.y -= 0.015
@@ -211,17 +230,17 @@ const kickGoal = () => {
     }
 
   }
-  animate()
+  animatePlayer()
   animateComputer()
 }
 
 const moveLeft = () => {
-  if (playerFootball.position.x == 0) return
+  if (playerFootball.position.x == 0.1) return
   playerFootball.position.z -= 0.03
 }
 
 const moveRight = () => {
-  if (playerFootball.position.x == 0) return
+  if (playerFootball.position.x == 0.1) return
   playerFootball.position.z += 0.03
 }
 
